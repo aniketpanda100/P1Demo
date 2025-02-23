@@ -14,7 +14,7 @@ import { CreateReimbursement } from './Components/Reimbursements/CreateReimburse
 function App() {
 
   return (
-    <>
+    <div style={{ minHeight: '100vh', backgroundColor: '#f8f9fa' }}>
       
       <BrowserRouter>
         <Routes>
@@ -27,7 +27,7 @@ function App() {
         </Routes>
       </BrowserRouter>
 
-    </>
+    </div>
   )
 }
 

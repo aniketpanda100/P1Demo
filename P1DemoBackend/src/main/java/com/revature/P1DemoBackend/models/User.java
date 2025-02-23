@@ -3,6 +3,9 @@ package com.revature.P1DemoBackend.models;
 import jakarta.persistence.*;
 import org.springframework.stereotype.Component;
 
+import java.util.HashSet;
+import java.util.Set;
+
 @Component //1 of 4 stereotype annotations (make a class a bean)
 @Entity //This makes the class a DB entity
 @Table(name = "users") //This annotation lets us specify the name of the DB table
@@ -26,6 +29,9 @@ public class User {
 
     private String role = "user"; //we set a default value for role
     //but we can specify a different role when we create a User if we need to
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<Reimbursement> reimbursements = new HashSet<>();
 
     //boilerplate-----------------------------------------------
 

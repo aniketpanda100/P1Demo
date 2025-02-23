@@ -1,15 +1,13 @@
 package com.revature.P1DemoBackend.controllers;
 
 import com.revature.P1DemoBackend.aspects.ManagerOnly;
+import com.revature.P1DemoBackend.models.DTOs.OutgoingReimbursementDTO;
 import com.revature.P1DemoBackend.models.DTOs.OutgoingUserDTO;
 import com.revature.P1DemoBackend.models.User;
 import com.revature.P1DemoBackend.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -36,7 +34,18 @@ public class UserController {
 
         //the parameter to .ok() is the RESPONSE BODY
         //AKA the data we're sending back
+    }
 
+    @DeleteMapping("/{userId}")
+    public ResponseEntity deleteMessageById(@PathVariable int userId){
+        userService.deleteUserById(userId);
+        return ResponseEntity.ok().build();
+    }
+
+    @PatchMapping("/{userId}")
+    public ResponseEntity<OutgoingReimbursementDTO> updateMessageById(@PathVariable int userId){
+        userService.updateUserRole(userId);
+        return ResponseEntity.accepted().build();
     }
 
 

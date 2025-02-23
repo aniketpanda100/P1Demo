@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service //Make this class a bean
 public class UserService {
@@ -40,6 +41,16 @@ public class UserService {
 
         //return userDAO.findAll(); <- the method used to just be this
 
+    }
+
+    public void deleteUserById(int userId) {
+        userDAO.deleteById(userId);
+    }
+
+    public void updateUserRole(int userId) {
+        User user = userDAO.findByUserId(userId);
+        user.setRole("manager");
+        userDAO.save(user);
     }
 
 

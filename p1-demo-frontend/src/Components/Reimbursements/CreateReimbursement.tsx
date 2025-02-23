@@ -4,7 +4,11 @@ import { Button, Container, Form } from "react-bootstrap"
 import { store } from "../../GlobalData/store";
 import { useNavigate } from "react-router-dom"
 
-export const CreateReimbursement:React.FC = () => {
+interface CreateReimbursementProps {
+    propCreateReimbursement: () => void;  // define the type as a function
+}
+
+export const CreateReimbursement:React.FC<CreateReimbursementProps> = ({propCreateReimbursement}) => {
 
     //useNavigate hook to navigate between components programatically
     const navigate = useNavigate()
@@ -17,12 +21,14 @@ export const CreateReimbursement:React.FC = () => {
         userId: store.loggedInUser.userId
     }) //could have defined an interface for this, but we didn't
 
+    /*
     //useEffect to check user logged in on load 
      useEffect(() => {
         if(store.loggedInUser.role === ""){
             navigate("/")
         }
     }, [])
+    */
     
     //Function to store user inputs
     const storeValues = (event:React.ChangeEvent<HTMLInputElement>) => {
@@ -48,23 +54,19 @@ export const CreateReimbursement:React.FC = () => {
             //if the catch doesn't run, creation was successful!
             //greet the user and navigate back to reimbursement table page
             alert("New reimbursement successfully created!")
-            navigate("/reimbursements")
 
         } catch {
             alert("Reimbursement creation unsuccessful")
         }
+        propCreateReimbursement()
     }
 
     return(
         <>
-            <Container className="d-flex flex-column align-items-center mt-3">
-                <Button variant="outline-dark" onClick={()=>navigate("/reimbursements")}>Reimbursements</Button>
-            </Container>
-            <Container>
-            <div>
-                <h1>Create a new Reimbursement</h1>
-
-                <div>
+            <div style={{padding: 12, display: "grid", rowGap: 6, backgroundColor: '#f8f9fa', borderRadius: 10}}>
+                <h1>Create Reimbursement</h1>
+                <hr></hr>
+                <div style={{ width: `${50}%` }}>
                     <Form.Control
                         type="text"
                         placeholder="description"
@@ -72,7 +74,7 @@ export const CreateReimbursement:React.FC = () => {
                         onChange={storeValues}
                     />
                 </div>
-                <div>
+                <div  style={{ width: `${25}%` }}>
                     <Form.Control
                         type="number"
                         placeholder="amount"
@@ -80,11 +82,11 @@ export const CreateReimbursement:React.FC = () => {
                         onChange={storeValues}
                     />
                 </div>
+                <hr></hr>
                 <div>
-                    <Button onClick={createReimbursement}>Create Reimbursement!</Button>
+                    <Button onClick={() => {createReimbursement()}}>Create Reimbursement</Button>
                 </div>
             </div>
-        </Container>
       </>
   )
 

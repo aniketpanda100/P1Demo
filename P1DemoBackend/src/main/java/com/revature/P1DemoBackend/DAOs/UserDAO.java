@@ -1,5 +1,6 @@
 package com.revature.P1DemoBackend.DAOs;
 
+import com.revature.P1DemoBackend.models.Reimbursement;
 import com.revature.P1DemoBackend.models.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
@@ -19,5 +20,7 @@ public interface UserDAO extends JpaRepository<User, Integer> {
     //If it returns null, the user doesn't exist and login fails
     //If it returns a User object, the user exists and login succeeds
     public Optional<User> findByUsernameAndPassword(String username, String password);
+
+    public User findByUserId(int userId);
 
 }

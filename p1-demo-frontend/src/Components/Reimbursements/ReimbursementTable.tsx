@@ -1,19 +1,31 @@
 import axios from "axios"
 import { useEffect, useState } from "react"
 import { Button, Container, Table } from "react-bootstrap"
+import Modal from 'react-bootstrap/Modal';
 import { Reimbursement } from "../../Interfaces/Reimbursement"
 import { store } from "../../GlobalData/store";
 import { useNavigate } from "react-router-dom";
+import { CreateReimbursement } from "./CreateReimbursement";
 
 export const ReimbursementTable:React.FC = () => {
 
     //useNavigate hook to navigate between components programatically
     const navigate = useNavigate()
 
-    const [pendingFlag, setPendingFlag] = useState<boolean>(false)
+    //state to filter which records are showing by status
+    const [statusFilter, setStatusFilter] = useState<string[]>(["PENDING", "APPROVED", "DENIED"])
 
     //state object to store the User Array from the backend
     const [reimbursements, setReimbursements] = useState<Reimbursement[]>([])
+
+    //controls the modal for creating a new record
+    const [show, setShow] = useState(false);
+    const handleClose = () => setShow(false);
+    const handleShow = () => setShow(true);
+    const propCreateReimbursement = () => {
+        setShow(false) 
+        getReimbursements() 
+    }
 
     //useEffect - we'll call a GET request for all users when the component loads
     useEffect(() => {
@@ -54,31 +66,21 @@ export const ReimbursementTable:React.FC = () => {
             //reimbursements.filter(r => r.status === "PENDING")
 
             //store the user data in our "users" state object
-            setReimbursements(pendingFlag ? 
-                response.data.filter((r:Reimbursement) => r.status == "PENDING") : response.data) 
+            setReimbursements(response.data) 
         } catch {
             alert("Something went wrong trying to fetch reimbursements")
         }
     }
 
-    //function that does a fake update delete (wanna show how to extract data from a map)
-    const updateReimbursement = (reimbursement:Reimbursement) => {
-        alert("User " + reimbursement.reimbId + " has been fake updated or deleted")
-
-        //TODO: Could definitely make another call to getReimbursements for automatic updates
-        //TODO2: Cache the list of users and update THAT so we don't make a repeat DB call
-    }
-
-    //handler for pending button
-    const togglePending = () => {
-        setPendingFlag(!pendingFlag)
-        getReimbursements()
+    //handler for status filter menu
+    const filterByStatus = (event:React.ChangeEvent<HTMLSelectElement>) => {
+        setStatusFilter(event.target.value === "All" ? ["PENDING", "APPROVED", "DENIED"] : [event.target.value])
     }
 
     //handler for status menu
-    const updateStatus = async (event:React.ChangeEvent<HTMLInputElement>) => {
+    const updateStatus = async (event:React.ChangeEvent<HTMLSelectElement>) => {
         const reim:Reimbursement | undefined = reimbursements.find(r => r.reimbId === Number(event.target.id))
-        //console.log(reim)
+
         if (reim === undefined) return;
         reim.status = event.target.value
 
@@ -103,48 +105,62 @@ export const ReimbursementTable:React.FC = () => {
 
     return(
         <>
-            <Container className="d-flex flex-column align-items-center mt-3">
-                <Button variant="outline-dark" onClick={()=>navigate("/create-reimbursement")}>Add Reimbursement</Button>
-                <Button variant="outline-dark" onClick={togglePending}>Toggle Pending</Button>
-            </Container>
+            <div style={{padding: 12, background: "black", display: "flex", gap: 12}}>
+                {<Button onClick={()=>{store.loggedInUser.role = ""; navigate("/");}}>Logout</Button>}
+                {store.loggedInUser.role === "manager" ?
+                        <Button onClick={()=>navigate("/users")}>Users</Button> : null
+                }
+                {<Button onClick={handleShow}>Add Reimbursement</Button>}
+                <select onChange={filterByStatus}>
+                        <option value="All">All</option>
+                        <option value="PENDING">PENDING</option>
+                        <option value="APPROVED">APPROVED</option>
+                        <option value="DENIED">DENIED</option>
+                </select>
+            </div>
             <Container className="d-flex flex-column align-items-center mt-3">
                 
                 <h3>Reimbursements: </h3>
 
-                <Table className="table-dark table-hover  table-striped w-50">
-                    <thead>
+                <Table className="table-hover table-striped w-50">
+                    <thead className="table-dark">
                         <tr>
                             <th>Reimbursement ID</th>
                             <th>Description</th>
-                            <th>Amount</th>
+                            <th>Amount ($)</th>
                             <th>Status</th>
                             <th>User ID</th>
                         </tr>
                     </thead>
-                    <tbody className="table-secondary">
-                        {reimbursements.map((reimbursement:Reimbursement) => (
-                            <tr key={reimbursement.reimbId}>
-                                <td>{reimbursement.reimbId}</td>
-                                <td>{reimbursement.description}</td>
-                                <td>{reimbursement.amount}</td>
-                                <td className={statusColors[reimbursement.status]}>
-                                    {store.loggedInUser.role === "manager" ?
-                                    <select name="status" id={String(reimbursement.reimbId)}
-                                     value={reimbursement.status} onChange={updateStatus}>
-                                        <option value="PENDING">PENDING</option>
-                                        <option value="APPROVED">APPROVED</option>
-                                        <option value="DENIED">DENIED</option>
-                                    </select>
-                                    :reimbursement.status}
-                                </td>
-                                <td>{reimbursement.userId}</td>
-                            </tr>
-                        ))} 
+                    <tbody className="table-primary">
+                        {reimbursements.map((reimbursement:Reimbursement) => {
+                            if (statusFilter.includes(reimbursement.status )) return (
+                                <tr key={reimbursement.reimbId}>
+                                    <td>{reimbursement.reimbId}</td>
+                                    <td>{reimbursement.description}</td>
+                                    <td>{reimbursement.amount}</td>
+                                    <td className={statusColors[reimbursement.status]}>
+                                        {store.loggedInUser.role === "manager" ?
+                                        <select name="status" id={String(reimbursement.reimbId)}
+                                        value={reimbursement.status} onChange={updateStatus}>
+                                            <option value="PENDING">PENDING</option>
+                                            <option value="APPROVED">APPROVED</option>
+                                            <option value="DENIED">DENIED</option>
+                                        </select>
+                                        :reimbursement.status}
+                                    </td>
+                                    <td>{reimbursement.userId}</td>
+                                </tr> 
+                            )
+                        })} 
                     {/* WHY parenthesis to open the arrow func? because it implicitly returns */}
                     </tbody>
                 </Table>
-
             </Container>
+        
+            <Modal show={show} onHide={handleClose}>
+                <CreateReimbursement propCreateReimbursement={propCreateReimbursement}></CreateReimbursement>
+            </Modal>
         </>
     )
 

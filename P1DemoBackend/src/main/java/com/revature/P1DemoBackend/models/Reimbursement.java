@@ -32,7 +32,13 @@ public class Reimbursement {
         -When we fetch a reimbursement, the DB fetches the appropriate user
 
      -JoinColumn: this is how we reference the PK of the users table*/
+    /*
     @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @JoinColumn(name = "userId")
+    private User user;
+    */
+
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "userId")
     private User user;
 

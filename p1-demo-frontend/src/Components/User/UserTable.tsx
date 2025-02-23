@@ -46,35 +46,59 @@ export const UserTable:React.FC = () => {
         }
     }
 
-    //function that does a fake update delete (wanna show how to extract data from a map)
-    const updateUser = (user:User) => {
-        alert("User " + user.userId + " has been fake updated or deleted")
 
-        //TODO: Could definitely make another call to getAllUsers for automatic updates
-        //TODO2: Cache the list of users and update THAT so we don't make a repeat DB call
+    //handler for status menu
+    const userAction = async (event:React.ChangeEvent<HTMLSelectElement>) => {
+
+        if (event.target.value === "DELETE") {
+            try{
+                //DELETE request
+                const response = await axios.delete("http://localhost:8080/users/" + event.target.id, {withCredentials:true})
+
+                //if the catch doesn't run, update was successful!
+                alert("User deleted!")
+            } catch{
+                alert("Delete unsuccessful")
+            }
+        }
+        else { 
+            try{
+                //PATCH request
+                const response = await axios.patch("http://localhost:8080/users/" + event.target.id, null, {withCredentials:true})
+
+                //if the catch doesn't run, update was successful!
+                alert("Promotion successful!")
+            } catch {
+                alert("Promotion unsuccessful")
+            }
+        }
+        getAllUsers()
     }
 
 
     return(
         <>
-            <Container className="d-flex flex-column align-items-center mt-3">
-                <Button variant="outline-dark" onClick={()=>navigate("/reimbursements")}>Reimbursements</Button>
-            </Container>
+            <div style={{padding: 12, background: "black", display: "flex", gap: 12}}>
+                {<Button onClick={()=>{store.loggedInUser.role = ""; navigate("/");}}>Logout</Button>}
+                {store.loggedInUser.role === "manager" ?
+                    <Button onClick={()=>navigate("/reimbursements")}>Reimbursements</Button> : null
+                }
+            </div>
             <Container className="d-flex flex-column align-items-center mt-3">
                 
                 <h3>Users: </h3>
 
-                <Table className="table-dark table-hover table-striped w-50">
-                    <thead>
+                <Table className="table-hover table-striped w-50">
+                    <thead className="table-dark">
                         <tr>
                             <th>User Id</th>
                             <th>Full Name</th>
                             <th>Username</th>
                             <th>Role</th>
-                            <th>Options</th>
+                            <th>Actions</th>
                         </tr>
                     </thead>
-                    <tbody className="table-secondary">
+                    <tbody className="table-primary">
                         {users.map((user:User) => (
                             <tr key={user.userId}>
                                 <td>{user.userId}</td>
@@ -82,8 +106,11 @@ export const UserTable:React.FC = () => {
                                 <td>{user.username}</td>
                                 <td>{user.role}</td>
                                 <td>
-                                    <Button variant="outline-success" onClick={() => updateUser(user)}>Promote</Button>
-                                    <Button variant="outline-danger" onClick={() => updateUser(user)}>Fire</Button>
+                                    <select id={String(user.userId)} onChange={userAction}>
+                                        <option value="" selected disabled>Choose an action</option>
+                                        <option value="PROMOTE">PROMOTE</option>
+                                        <option value="DELETE">DELETE</option>
+                                    </select>
                                 </td>
                             </tr>
                         ))} 
