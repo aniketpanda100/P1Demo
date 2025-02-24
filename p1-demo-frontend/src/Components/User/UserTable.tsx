@@ -106,7 +106,17 @@ export const UserTable:React.FC = () => {
                                 <td>{user.username}</td>
                                 <td>{user.role}</td>
                                 <td>
-                                    <select id={String(user.userId)} onChange={userAction}>
+                                    <select id={String(user.userId)} onChange={userAction}
+                                        style={{
+                                            padding: '0.5rem',
+                                            borderRadius: '0.375rem',
+                                            border: '1px solid #e5e7eb',
+                                            backgroundColor: 'white',
+                                            cursor: 'pointer',
+                                            fontSize: '0.875rem',
+                                            outline: 'none'
+                                        }}
+                                    >
                                         <option value="" selected disabled>Choose an action</option>
                                         <option value="PROMOTE">PROMOTE</option>
                                         <option value="DELETE">DELETE</option>

@@ -47,6 +47,15 @@ export const CreateReimbursement:React.FC<CreateReimbursementProps> = ({propCrea
     //axios is a way to send HTTP requests from React
     const createReimbursement = async () => {
 
+        if (reimbursementData.description === null || reimbursementData.description.trim() === "") {
+            alert("Invalid description!")
+            return
+        }
+        if (reimbursementData.amount < 1) {
+            alert("Invalid amount!")
+            return
+        }
+
         try{
             //POST request
             const response = await axios.post("http://localhost:8080/reimbursements", reimbursementData, {withCredentials:true})
@@ -58,7 +67,9 @@ export const CreateReimbursement:React.FC<CreateReimbursementProps> = ({propCrea
         } catch {
             alert("Reimbursement creation unsuccessful")
         }
-        propCreateReimbursement()
+        finally {
+            propCreateReimbursement()
+        }
     }
 
     return(
@@ -80,6 +91,7 @@ export const CreateReimbursement:React.FC<CreateReimbursementProps> = ({propCrea
                         placeholder="amount"
                         name="amount"
                         onChange={storeValues}
+                        min={0}
                     />
                 </div>
                 <hr></hr>

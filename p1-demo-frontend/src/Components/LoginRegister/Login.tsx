@@ -1,6 +1,7 @@
 import axios from "axios";
 import { useEffect, useRef, useState } from "react";
-import { Button, Container, Form } from "react-bootstrap"
+//import './login.css';
+//import { Button, Container, Form } from "react-bootstrap"
 import { useNavigate } from "react-router-dom"
 import { store } from "../../GlobalData/store";
 
@@ -47,7 +48,15 @@ export const Login:React.FC = () => {
     //navigates to /users if a manager logged in, and /reimbursements if a user logged in
     const login = async () => {
 
-        //TODO: make sure the username/password are present before proceeding
+        //make sure the username/password are present before proceeding
+        if (loginCreds.username === null || loginCreds.username.trim() === "") {
+            alert("Invalid username!")
+            return
+        }
+        if (loginCreds.password === null || loginCreds.password.trim() === "") {
+            alert("Invalid password!")
+            return
+        }
 
         try{
 
@@ -70,44 +79,123 @@ export const Login:React.FC = () => {
             }
 
         } catch {
-            alert("Login unsuccessful")
+            alert("Login unsuccessful.")
         }
     }
 
+    const [loginHovered, setLoginHovered] = useState(false);
+    const [registerHovered, setRegisterHovered] = useState(false);
 
-
-    return(
-        /*Bootstrap gives us this Container element that does some default padding and centering*/
-        <Container> 
-
-            <h1 className="mb-5">Welcome</h1>
-                <h3>Please Log In:</h3>
-                
-                <div>
-                    <Form.Control
-                        type="text"
-                        placeholder="username"
-                        name="username"
-                        ref={usernameRef} //attach our usernameRef here!
-                        //This is how our useRef knows what to focus.
-                        onChange={storeValues}
-                    />
-                </div>
-
-                <div>
-                    <Form.Control
-                        type="password"
-                        placeholder="password"
-                        name="password"
-                        onChange={storeValues}
-                    />
-                </div>
-                
-
-            <Button variant="outline-success m-1" onClick={login}>Login</Button>
-            <Button variant="outline-dark" onClick={()=>navigate("/register")}>Register</Button>
-        </Container>
-    )
-
-
+    return (
+        <div style={{
+          minHeight: '100vh',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          backgroundColor: '#f9fafb'
+        }}>
+          <div style={{
+            width: '100%',
+            maxWidth: '32rem',
+            padding: '2rem',
+            backgroundColor: 'white',
+            borderRadius: '0.5rem',
+            boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
+          }}>
+            <div style={{ textAlign: 'center' }}>
+              <h1 style={{ 
+                fontSize: '2.25rem',
+                fontWeight: 'bold',
+                marginBottom: '1.5rem'
+              }}>Welcome</h1>
+              <h3 style={{ 
+                fontSize: '1.5rem',
+                marginBottom: '2rem'
+              }}>Please Log In:</h3>
+            </div>
+    
+            <div style={{ marginBottom: '1.5rem' }}>
+              <div style={{ 
+                marginBottom: '1rem',
+                display: 'flex',
+                justifyContent: 'center'
+              }}>
+                <input
+                  type="text"
+                  placeholder="username"
+                  name="username"
+                  ref={usernameRef}
+                  onChange={storeValues}
+                  style={{
+                    width: '60%',
+                    padding: '0.5rem',
+                    border: '1px solid #e5e7eb',
+                    borderRadius: '0.375rem',
+                    fontSize: '0.875rem'
+                  }}
+                />
+              </div>
+    
+              <div style={{ 
+                marginBottom: '1rem',
+                display: 'flex',
+                justifyContent: 'center'
+              }}>
+                <input
+                  type="password"
+                  placeholder="password"
+                  name="password"
+                  onChange={storeValues}
+                  style={{
+                    width: '60%',
+                    padding: '0.5rem',
+                    border: '1px solid #e5e7eb',
+                    borderRadius: '0.375rem',
+                    fontSize: '0.875rem'
+                  }}
+                />
+              </div>
+            </div>
+    
+            <div style={{ 
+              display: 'flex',
+              justifyContent: 'center',
+              gap: '1rem'
+            }}>
+              <button 
+                onClick={login}
+                onMouseEnter={() => setLoginHovered(true)}
+                onMouseLeave={() => setLoginHovered(false)}
+                style={{
+                  padding: '0.5rem 1.5rem',
+                  border: '2px solid #22c55e',
+                  borderRadius: '0.375rem',
+                  color: loginHovered ? 'white' : '#22c55e',
+                  backgroundColor: loginHovered ? '#22c55e' : 'transparent',
+                  cursor: 'pointer',
+                  transition: 'all 0.2s ease',
+                }}
+              >
+                Login
+              </button>
+              <button 
+                onClick={() => navigate("/register")}
+                onMouseEnter={() => setRegisterHovered(true)}
+                onMouseLeave={() => setRegisterHovered(false)}
+                style={{
+                  padding: '0.5rem 1.5rem',
+                  border: '2px solid #374151',
+                  borderRadius: '0.375rem',
+                  color: registerHovered ? 'white' : '#374151',
+                  backgroundColor: registerHovered ? '#374151' : 'transparent',
+                  cursor: 'pointer',
+                  transition: 'all 0.2s ease',
+                }}
+              >
+                Register
+              </button>
+            </div>
+          </div>
+        </div>
+      )
 }

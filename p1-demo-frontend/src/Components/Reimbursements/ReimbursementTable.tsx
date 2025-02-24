@@ -111,7 +111,17 @@ export const ReimbursementTable:React.FC = () => {
                         <Button onClick={()=>navigate("/users")}>Users</Button> : null
                 }
                 {<Button onClick={handleShow}>Add Reimbursement</Button>}
-                <select onChange={filterByStatus}>
+                <select onChange={filterByStatus}
+                    style={{
+                        padding: '0.5rem',
+                        borderRadius: '0.375rem',
+                        border: '1px solid #e5e7eb',
+                        backgroundColor: 'white',
+                        cursor: 'pointer',
+                        fontSize: '0.875rem',
+                        outline: 'none'
+                    }}
+                >
                         <option value="All">All</option>
                         <option value="PENDING">PENDING</option>
                         <option value="APPROVED">APPROVED</option>
@@ -142,7 +152,16 @@ export const ReimbursementTable:React.FC = () => {
                                     <td className={statusColors[reimbursement.status]}>
                                         {store.loggedInUser.role === "manager" ?
                                         <select name="status" id={String(reimbursement.reimbId)}
-                                        value={reimbursement.status} onChange={updateStatus}>
+                                        value={reimbursement.status} onChange={updateStatus}
+                                        style={{
+                                            padding: '0.5rem',
+                                            borderRadius: '0.375rem',
+                                            border: '1px solid #e5e7eb',
+                                            backgroundColor: 'white',
+                                            cursor: 'pointer',
+                                            fontSize: '0.875rem',
+                                            outline: 'none'
+                                        }}>
                                             <option value="PENDING">PENDING</option>
                                             <option value="APPROVED">APPROVED</option>
                                             <option value="DENIED">DENIED</option>
