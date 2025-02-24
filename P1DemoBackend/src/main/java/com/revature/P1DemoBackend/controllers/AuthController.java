@@ -4,6 +4,7 @@ import com.revature.P1DemoBackend.models.DTOs.LoginDTO;
 import com.revature.P1DemoBackend.models.DTOs.OutgoingUserDTO;
 import com.revature.P1DemoBackend.models.User;
 import com.revature.P1DemoBackend.services.AuthService;
+import com.revature.P1DemoBackend.services.UserService;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -27,6 +28,10 @@ public class AuthController {
     //Insert a new user (POST request)
     @PostMapping("/register") //Requests ending in /auth/register will invoke this method
     public ResponseEntity<OutgoingUserDTO> registerUser(@RequestBody User user){
+
+        //check if username already exists
+        User duplicateUser = authService.findByUsername(user.getUsername());
+        if (duplicateUser != null) return ResponseEntity.status(409).build();
 
         //Send the User data to the service (which will send it to the DAO)
         OutgoingUserDTO returnedUser = authService.registerUser(user);

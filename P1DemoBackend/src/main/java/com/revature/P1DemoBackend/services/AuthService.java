@@ -77,6 +77,10 @@ public class AuthService {
         return new OutgoingUserDTO(returnedUser); //using our convenient constructor that takes in a User
     }
 
+    public User findByUsername(String username) {
+        return userDAO.findByUsername(username);
+    }
+
 }
 
 
